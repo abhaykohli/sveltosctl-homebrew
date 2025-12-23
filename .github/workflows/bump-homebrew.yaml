@@ -1,0 +1,25 @@
+name: Test Homebrew bump
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  bump-formula:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Homebrew
+        run: brew update
+
+      - name: Bump test tap formula
+        env:
+          HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.HOMEBREW_GITHUB_API_TOKEN }}
+        run: |
+          brew bump-formula-pr \
+            --tap abhaykohli/homebrew-tap-sveltosctl-ak \
+            --tag ${{ github.ref_name }} \
+            --revision $(git rev-parse ${{ github.ref_name }}) \
+            sveltosctl
